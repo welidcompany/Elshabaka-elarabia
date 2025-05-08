@@ -1,38 +1,33 @@
-
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <title>سلة المشتريات</title>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>إنشاء حساب</title>
   <style>
-    body { font-family: Arial; background: #f0f0f0; padding: 20px; }
-    table { width: 100%; border-collapse: collapse; background: white; }
-    th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
-    button { background: green; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; }
+    body { font-family: Arial, sans-serif; background: #f4f4f4; margin:0; display:flex; justify-content:center; align-items:center; height:100vh; }
+    .box { background:#fff; padding:20px; border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); width:320px; }
+    h2 { color:#28a745; margin-bottom:15px; text-align:center; }
+    input { width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:4px; }
+    .btn { width:100%; padding:10px; background:#28a745; color:#fff; border:none; border-radius:4px; cursor:pointer; }
+    .btn:hover { background:#218838; }
+    .switch { text-align:center; margin-top:10px; }
+    .switch a { color:#28a745; text-decoration:none; }
   </style>
 </head>
 <body>
-  <h1>سلة المشتريات</h1>
-  <table>
-    <thead>
-      <tr><th>المنتج</th><th>السعر</th></tr>
-    </thead>
-    <tbody id="cart-items"></tbody>
-  </table>
-  <h3 id="total"></h3>
-  <a href="checkout.html"><button>إتمام الشراء</button></a>
 
-  <script>
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const tbody = document.getElementById("cart-items");
-    let total = 0;
-    cart.forEach(item => {
-      const row = document.createElement("tr");
-      row.innerHTML = `<td>${item.name}</td><td>${item.price}</td>`;
-      tbody.appendChild(row);
-      total += item.price;
-    });
-    document.getElementById("total").textContent = "الإجمالي: " + total + " أوقية";
-  </script>
+  <div class="box">
+    <h2>إنشاء حساب</h2>
+    <form action="#" method="POST">
+      <input type="text" name="name" placeholder="الاسم الكامل" required>
+      <input type="text" name="email" placeholder="البريد الإلكتروني" required>
+      <input type="password" name="password" placeholder="كلمة المرور" required>
+      <button type="submit" class="btn">إنشاء</button>
+    </form>
+    <div class="switch">
+      <p>لديك حساب بالفعل؟ <a href="login.html">تسجيل الدخول</a></p>
+    </div>
+  </div>
+
 </body>
 </html>
