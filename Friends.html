@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>الأصدقاء — الشبكة العربية</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>الشبكة العربية</header>
+  <nav>
+    <a href="posts.html">المنشورات</a>
+    <a href="videos.html">الفيديوهات</a>
+    <a href="messages.html">المراسلة</a>
+    <a class="active" href="friends.html">الأصدقاء</a>
+    <a href="profile.html">أنا</a>
+    <span id="nav-user" style="margin-left:auto; padding:0 16px;"></span>
+    <button class="btn" onclick="logout()">خروج</button>
+  </nav>
+
+  <div class="container">
+    <h2>إرسال طلب صداقة</h2>
+    <form id="req-form">
+      <input type="email" name="toEmail" placeholder="بريد صديقك" required>
+      <button class="btn" type="submit">إرسال</button>
+    </form>
+    <hr>
+    <h2>الطلبات الواردة</h2>
+    <div id="incoming"></div>
+  </div>
+
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="main.js"></script>
+  <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { collection, addDoc, query, where, onSnapshot, updateDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+    const reqCol = collection(db, 'friend_requests');
+    const incoming = document.getElementById('incoming');
+
+    document.getElementById('req-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const { toEmail } = e.target;
+      await addDoc(reqCol, {
+        from: auth.currentUser.uid,
+        toEmail: toEmail.value,
+        status: 'pending',
+        created: Date.now()
+      });
+      e.target.reset();
+    });
+
+    onSnapshot(
+      query(reqCol, where('toEmail','==', auth.currentUser.email)),
+      snap => {
+        incoming.innerHTML = '';
+        snap.forEach(docSnap => {
+          const r = docSnap.data();
+          const div = document.createElement('div');
+          div.className = 'container';
+          div.innerHTML = `
+            <p>طلب من: <strong>${r.from}</strong></p>
+            <button onclick="respond('${docSnap.id}','accepted')" class="btn">قبول</button>
+            <button onclick="respond('${docSnap.id}','rejected')" class="btn">رفض</button>
+            <hr>`;
+          incoming.append(div);
+        });
+      }
+    );
+
+    window.respond = async (id, status) => {
+      await updateDoc(doc(db,'friend_requests',id), { status });
+    };
+  </script>
+</body>
+</html>
