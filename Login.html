@@ -1,23 +1,32 @@
-
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>اتصل بنا</title>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>دخول أو تسجيل</title>
   <style>
-    body { font-family: Arial; background: white; color: #000; text-align: center; margin: 0; direction: rtl; }
-    header, footer { background: #007BFF; color: white; padding: 10px; }
-    main { padding: 40px; }
-    a { color: #007BFF; font-size: 20px; }
+    body { font-family: Arial, sans-serif; background: #f4f4f4; margin:0; display:flex; justify-content:center; align-items:center; height:100vh; }
+    .box { background:#fff; padding:20px; border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); width:320px; }
+    h2 { color:#28a745; margin-bottom:15px; text-align:center; }
+    input { width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:4px; }
+    .btn { width:100%; padding:10px; background:#28a745; color:#fff; border:none; border-radius:4px; cursor:pointer; }
+    .btn:hover { background:#218838; }
+    .switch { text-align:center; margin-top:10px; }
+    .switch a { color:#28a745; text-decoration:none; }
   </style>
 </head>
 <body>
-  <header><h2>تواصل معنا</h2></header>
-  <main>
-    <p>اضغط هنا للتواصل معنا عبر واتساب</p>
-    <a href="https://wa.me/96531484257">&#128222; واتساب</a>
-  </main>
-  <footer>جميع الحقوق محفوظة 2025</footer>
+
+  <div class="box">
+    <h2>تسجيل الدخول</h2>
+    <form action="#" method="POST">
+      <input type="text" name="email" placeholder="البريد الإلكتروني" required>
+      <input type="password" name="password" placeholder="كلمة المرور" required>
+      <button type="submit" class="btn">دخول</button>
+    </form>
+    <div class="switch">
+      <p>لا تملك حساب؟ <a href="register.html">إنشاء حساب</a></p>
+    </div>
+  </div>
+
 </body>
 </html>
