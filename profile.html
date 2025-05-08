@@ -1,33 +1,57 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ملفي الشخصي</title>
-  <style>
-    body { font-family: Arial, sans-serif; background:#f4f4f4; margin:0;}
-    header, nav { /* انسخ من index.html */ }
-    .container { padding:20px; max-width:900px; margin:20px auto; }
-    h2 { color:#28a745; margin-bottom:15px; }
-    .info { background:#fff; border-radius:6px; padding:15px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ملفي الشخصي — الشبكة العربية</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- انسخ header و nav -->
-  <header><h1>الشبكة العربية</h1></header>
+  <header>الشبكة العربية</header>
   <nav>
+    <a href="posts.html">المنشورات</a>
     <a href="videos.html">الفيديوهات</a>
     <a href="messages.html">المراسلة</a>
-    <a href="posts.html">المنشورات</a>
-    <a href="profile.html">أنا</a>
-    <a href="login.html" style="margin-left:auto; background:#218838; color:#fff; border-radius:4px;">دخول/تسجيل</a>
+    <a href="friends.html">الأصدقاء</a>
+    <a class="active" href="profile.html">أنا</a>
+    <span id="nav-user" style="margin-left:auto; padding:0 16px;"></span>
+    <button class="btn" onclick="logout()">خروج</button>
   </nav>
 
   <div class="container">
-    <h2>ملفي الشخصي</h2>
-    <div class="info">
-      <p><strong>الاسم:</strong> اسم المستخدم</p>
-      <p><strong>البريد الإلكتروني:</strong> user@example.com</p>
-    </div>
+    <h2>تغيير صورة الغلاف</h2>
+    <form id="cover-form">
+      <input type="file" name="cover" accept="image/*" required>
+      <button class="btn" type="submit">رفع</button>  
+    </form>
+    <hr>
+    <h2>معاينة الغلاف</h2>
+    <img id="cover-img" src="" alt="Cover" style="max-width:100%;border-radius:8px;">
   </div>
+
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="main.js"></script>
+  <script type="module">
+    import { auth, db, storage } from './firebase-config.js';
+    import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
+
+    const profileDoc = doc(db, 'profiles', auth.currentUser.uid);
+
+    // تحميل الغلاف الحالي
+    getDoc(profileDoc).then(snap => {
+      const data = snap.data();
+      if (data.coverURL) document.getElementById('cover-img').src = data.coverURL;
+    });
+
+    document.getElementById('cover-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const file = e.target.cover.files[0];
+      const snapf = await uploadBytes(ref(storage, `covers/${auth.currentUser.uid}`), file);
+      const url = await getDownloadURL(snapf.ref);
+      await updateDoc(profileDoc, { coverURL: url });
+      document.getElementById('cover-img').src = url;
+    });
+  </script>
 </body>
 </html>
