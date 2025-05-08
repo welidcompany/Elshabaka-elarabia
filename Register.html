@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>سلة المشتريات</title>
+  <style>
+    body { font-family: Arial; background: #f0f0f0; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
+    button { background: green; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>سلة المشتريات</h1>
+  <table>
+    <thead>
+      <tr><th>المنتج</th><th>السعر</th></tr>
+    </thead>
+    <tbody id="cart-items"></tbody>
+  </table>
+  <h3 id="total"></h3>
+  <a href="checkout.html"><button>إتمام الشراء</button></a>
+
+  <script>
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const tbody = document.getElementById("cart-items");
+    let total = 0;
+    cart.forEach(item => {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${item.name}</td><td>${item.price}</td>`;
+      tbody.appendChild(row);
+      total += item.price;
+    });
+    document.getElementById("total").textContent = "الإجمالي: " + total + " أوقية";
+  </script>
+</body>
+</html>
