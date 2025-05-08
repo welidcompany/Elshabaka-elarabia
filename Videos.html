@@ -1,36 +1,49 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>الفيديوهات</title>
-  <style>
-    body { font-family: Arial, sans-serif; background:#f4f4f4; margin:0;}
-    header, nav { /* انسخ من index.html */ }
-    .container { padding:20px; max-width:900px; margin:20px auto; }
-    h2 { color:#28a745; margin-bottom:15px; }
-    .video { margin-bottom:20px; }
-    iframe { width:100%; height:400px; border-radius:6px; }
-  </style>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>الفيديوهات — الشبكة العربية</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- انسخ header و nav من index.html هنا -->
-  <header><h1>الشبكة العربية</h1></header>
+  <header>الشبكة العربية</header>
   <nav>
-    <a href="videos.html">الفيديوهات</a>
-    <a href="messages.html">المراسلة</a>
     <a href="posts.html">المنشورات</a>
+    <a class="active" href="videos.html">الفيديوهات</a>
+    <a href="messages.html">المراسلة</a>
+    <a href="friends.html">الأصدقاء</a>
     <a href="profile.html">أنا</a>
-    <a href="login.html" style="margin-left:auto; background:#218838; color:#fff; border-radius:4px;">دخول/تسجيل</a>
+    <span id="nav-user" style="margin-left:auto; padding:0 16px;"></span>
+    <button class="btn" onclick="logout()">خروج</button>
   </nav>
-
   <div class="container">
-    <h2>الفيديوهات</h2>
-    <div class="video">
-      <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-    </div>
-    <div class="video">
-      <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-    </div>
+    <h2>رفع فيديو</h2>
+    <form id="video-form">
+      <input type="text" name="title" placeholder="عنوان الفيديو" required>
+      <input type="file" name="media" accept="video/*" required>
+      <button class="btn" type="submit">رفع</button>
+    </form>
+    <hr>
+    <div id="videos-list"></div>
   </div>
-</body>
-</html>
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="main.js"></script>
+  <script type="module">
+    import { auth, db, storage } from './firebase-config.js';
+    import { collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
+    const vidsCol = collection(db, 'videos');
+    const vidsList = document.getElementById('videos-list');
+    document.getElementById('video-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const { title, media } = e.target;
+      const snap = await uploadBytes(ref(storage, `videos/${Date.now()}_${media.files[0].name}`), media.files[0]);
+      const mediaURL = await getDownloadURL(snap.ref);
+      await addDoc(vidsCol, {
+        uid: auth.currentUser.uid,
+        author: auth.currentUser.displayName,
+        title: title.value,
+        mediaURL,
+        created: Date.now()
+      });
+      e.target.reset();
